@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.common;
+package xyz.comfyz.security.core.access.common;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

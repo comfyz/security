@@ -3,10 +3,10 @@ package xyz.comfyz.security.core.util;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.core.common.HttpSecurity;
-import xyz.comfyz.security.core.common.SecurityContext;
+import xyz.comfyz.security.core.access.common.HttpSecurity;
+import xyz.comfyz.security.core.access.SecurityContext;
 import xyz.comfyz.security.core.model.AuthenticationToken;
-import xyz.comfyz.security.core.support.SecurityMetadataSource;
+import xyz.comfyz.security.core.access.common.SecurityMetadataSource;
 
 import javax.servlet.http.Cookie;
 

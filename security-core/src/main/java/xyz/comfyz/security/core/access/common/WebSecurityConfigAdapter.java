@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.common;
+package xyz.comfyz.security.core.access.common;
 
 /**
  * Author:      宗康飞

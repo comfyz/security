@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.support;
+package xyz.comfyz.security.core.access.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import xyz.comfyz.security.core.model.SecurityAuthorizeMode;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import javax.annotation.PostConstruct;

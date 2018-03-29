@@ -3,7 +3,7 @@ package xyz.comfyz.security.example.service;
 import org.springframework.stereotype.Service;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.UserDetalis;
-import xyz.comfyz.security.core.support.UserDetailsService;
+import xyz.comfyz.security.core.access.common.UserDetailsService;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import java.util.Collections;

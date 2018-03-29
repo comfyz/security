@@ -33,7 +33,9 @@ public class PostApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
         logger.info("\nAccess URLs:\n***************************\n"
-                + "Local: \t\thttp://127.0.0.1:{}\n" +
-                "***************************", StringUtils.isEmpty(env.getProperty("server.port")) ? "8080" : env.getProperty("server.port"));
+                        + "Local: \t\thttp://127.0.0.1:{}{}\n" +
+                        "***************************",
+                StringUtils.isEmpty(env.getProperty("server.port")) ? "8080" : env.getProperty("server.port"),
+                StringUtils.isEmpty(env.getProperty("server.context-path")) ? "" : env.getProperty("server.context-path"));
     }
 }

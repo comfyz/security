@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import xyz.comfyz.security.core.EnableWebSecurity;
 import xyz.comfyz.security.core.cache.impl.NullUserDetailsCache;
-import xyz.comfyz.security.core.common.HttpSecurity;
-import xyz.comfyz.security.core.common.WebSecurityConfigAdapter;
+import xyz.comfyz.security.core.access.common.HttpSecurity;
+import xyz.comfyz.security.core.access.common.WebSecurityConfigAdapter;
 import xyz.comfyz.security.core.model.AuthenticationToken;
-import xyz.comfyz.security.core.support.UserDetailsService;
+import xyz.comfyz.security.core.access.common.UserDetailsService;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 
 /**

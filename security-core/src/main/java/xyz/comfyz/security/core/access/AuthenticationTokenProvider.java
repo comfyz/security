@@ -1,14 +1,15 @@
-package xyz.comfyz.security.core.support;
+package xyz.comfyz.security.core.access;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import xyz.comfyz.security.core.access.common.UserDetailsService;
 import xyz.comfyz.security.core.cache.UserDetailsCache;
-import xyz.comfyz.security.core.common.SecurityContext;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.util.SecurityUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Logger;
 
 /**
  * Author:      宗康飞
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 public class AuthenticationTokenProvider {
+    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
     private boolean ennableCache = false;
     private UserDetailsCache userDetailsCache;
     @Autowired
@@ -49,6 +51,7 @@ public class AuthenticationTokenProvider {
 
         //放入缓存
         cacheToken(token);
+//        LOGGER.info(JSONObject.toJSONString(token));
 
         return token;
     }

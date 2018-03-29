@@ -1,12 +1,11 @@
-package xyz.comfyz.security.core.common;
+package xyz.comfyz.security.core.access.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.core.access.SecurityFilter;
 import xyz.comfyz.security.core.cache.UserDetailsCache;
-import xyz.comfyz.security.core.support.SecurityAuthorizeMode;
-import xyz.comfyz.security.core.support.SecurityMetadataSource;
+import xyz.comfyz.security.core.model.SecurityAuthorizeMode;
+import xyz.comfyz.security.core.access.SecurityFilter;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import java.util.Arrays;
