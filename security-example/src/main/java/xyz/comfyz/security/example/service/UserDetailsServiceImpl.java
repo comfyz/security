@@ -29,7 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         users.put("10002", new AuthenticationToken(new UserDetalis("10002", "zhangsan", false)
                 , Collections.singletonList(new AntPathRequestMatcher("/role/zhangsan"))));
         users.put("10003", new AuthenticationToken(new UserDetalis("10003", "lisi", false)
-                , Collections.singletonList(new AntPathRequestMatcher("/role/"))));
+                , Collections.singletonList(new AntPathRequestMatcher("/role/lisi"))));
+
     }
 
     @Override
