@@ -21,8 +21,18 @@ public class RoleController {
         return "Hi, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName() + ". This path was only access for 张三";
     }
 
+    @GetMapping("/zhangsan/hi")
+    public String zhangsanHi() {
+        return "Hi, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName();
+    }
+
     @GetMapping("lisi")
     public String lisi() {
         return "Hi, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName() + ". This path was only access for 李四";
+    }
+
+    @GetMapping("/lisi/hi")
+    public String lisiHi() {
+        return "Hi, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName();
     }
 }

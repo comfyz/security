@@ -7,9 +7,9 @@ import xyz.comfyz.security.core.EnableWebSecurity;
 import xyz.comfyz.security.core.cache.impl.NullUserDetailsCache;
 import xyz.comfyz.security.core.common.HttpSecurity;
 import xyz.comfyz.security.core.common.WebSecurityConfigAdapter;
-import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.support.UserDetailsService;
+import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 
 /**
  * Author:      宗康飞
@@ -39,7 +39,13 @@ public class WebSecurityConfig extends WebSecurityConfigAdapter {
 
         httpSecurity
 
-                //公开访问
+                /**
+                 * 公开访问
+                 * { /* } 匹配直接下级 例如 { /love }
+                 * { /** } 表示所有所属下级 例如 { /love/you }
+                 * { /love/** } 表示{ /hi } 的所有所属下级 例如 { /love },{ /love/you },{ /love/you/forever }，但不包括{ /lovewith }
+                 */
+
                 .antMatchers("/login/**")
                 .antMatchers("/error")
                 .antMatchers("/api/**")

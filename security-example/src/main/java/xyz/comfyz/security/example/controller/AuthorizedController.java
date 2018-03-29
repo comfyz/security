@@ -16,9 +16,14 @@ import xyz.comfyz.security.core.common.SecurityContext;
 @RequestMapping("auth")
 public class AuthorizedController {
 
-    @GetMapping
+    @GetMapping("hi")
     public String sayHi() {
         return "Hi, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName() + ", u have login";
+    }
+
+    @GetMapping
+    public String sayHello() {
+        return "Hello, " + SecurityContext.getAuthenticationToken().getUserDetails().getUserName() + ", u have login";
     }
 
 }
