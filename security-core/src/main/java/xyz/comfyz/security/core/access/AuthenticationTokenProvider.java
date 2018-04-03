@@ -8,7 +8,6 @@ import xyz.comfyz.security.core.cache.UserDetailsCache;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.util.SecurityUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
 /**
@@ -20,25 +19,29 @@ import java.util.logging.Logger;
  */
 @Component
 public class AuthenticationTokenProvider {
-    private Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private Logger LOGGER = Logger.getLogger(AuthenticationTokenProvider.class.getName());
+
     private boolean ennableCache = false;
     private UserDetailsCache userDetailsCache;
+
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public AuthenticationToken loadUser(HttpServletRequest request) {
+    public AuthenticationToken loadUser() {
         //上下文查找
         AuthenticationToken token = SecurityContext.getAuthenticationToken();
 
         if (token == null) {
-            //检查cookie
-            String userId = SecurityUtils.getUserId();
-            if (!StringUtils.hasText(userId))
-                return null;
-
             //session
             token = SecurityUtils.getSessionToken();
+
             if (token == null) {
+                //检查cookie和header
+                String userId = SecurityUtils.getUserId();
+                if (!StringUtils.hasText(userId)) {
+                    return null;
+                }
+
                 if (this.ennableCache) {
                     //自定义缓存
                     token = this.userDetailsCache.get(userId);
@@ -51,7 +54,6 @@ public class AuthenticationTokenProvider {
 
         //放入缓存
         cacheToken(token);
-//        LOGGER.info(JSONObject.toJSONString(token));
 
         return token;
     }

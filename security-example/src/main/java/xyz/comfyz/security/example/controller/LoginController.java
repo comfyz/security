@@ -25,6 +25,7 @@ public class LoginController {
 
     @GetMapping("/{userId}")
     public String admin(@PathVariable String userId) {
+        SecurityUtils.signOut();
         AuthenticationToken token = userDetailsService.loadUser(userId);
         if (token == null) {
             return "no user found";
@@ -34,7 +35,7 @@ public class LoginController {
     }
 
     @GetMapping("out")
-    public String loginOut(){
+    public String loginOut() {
         SecurityUtils.signOut();
         return "Login out success.";
     }

@@ -3,29 +3,29 @@ package xyz.comfyz.security.core.util;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.core.access.common.HttpSecurity;
 import xyz.comfyz.security.core.access.SecurityContext;
-import xyz.comfyz.security.core.model.AuthenticationToken;
+import xyz.comfyz.security.core.access.common.HttpSecurity;
 import xyz.comfyz.security.core.access.common.SecurityMetadataSource;
+import xyz.comfyz.security.core.model.AuthenticationToken;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
-/**
- * Created by sage on 2017/11/19.
- */
+
 public class SecurityUtils {
     public static String signIn(AuthenticationToken token) {
-        if (token == null || token.getUserDetails() == null || !StringUtils.hasText(token.getUserDetails().getUserId()))
-            throw new IllegalArgumentException("用户实体为空");
-        String secret = encrypt(token);
-        Cookie cky = createCookie();
-        Cookie ckyLocal = createCookieLocal();
-        ckyLocal.setValue(secret);
-        cky.setValue(secret);
-        SecurityContext.getHttpServletResponse().addCookie(cky);
-        SecurityContext.getHttpServletResponse().addCookie(ckyLocal);
-        addSession(token);
-        return secret;
+        if (token != null && token.getUserDetails() != null && StringUtils.hasText(token.getUserDetails().getUserId())) {
+            String secret = encrypt(token);
+            Cookie cky = createCookie(secret);
+            Cookie ckyLocal = createCookieLocal(secret);
+            ckyLocal.setValue(secret);
+            cky.setValue(secret);
+            SecurityContext.getHttpServletResponse().addCookie(cky);
+            SecurityContext.getHttpServletResponse().addCookie(ckyLocal);
+            addSession(token);
+            return secret;
+        }
+        return "";
     }
 
     public static void signOut() {
@@ -34,8 +34,8 @@ public class SecurityUtils {
     }
 
     public static void removeCookie() {
-        Cookie cookie = createCookie();
-        Cookie ckyLocal = createCookieLocal();
+        Cookie cookie = createCookie("");
+        Cookie ckyLocal = createCookieLocal("");
         cookie.setMaxAge(0);
         ckyLocal.setMaxAge(0);
         SecurityContext.getHttpServletResponse().addCookie(cookie);
@@ -47,43 +47,46 @@ public class SecurityUtils {
     }
 
     public static String getUserId() {
+        String userId = null;
+        //cookie
         Cookie[] cookies = SecurityContext.getHttpServletRequest().getCookies();
         if (cookies != null) {
             for (Cookie cooky : cookies) {
                 if (cooky.getName().equals(HttpSecurity.getCookieConfig().getName()) && StringUtils.hasText(cooky.getValue())) {
-                    String code = EncryptUtil.aesDecrypt(cooky.getValue());
-                    JSONObject obj = (JSONObject) JSONObject.parse(code);
-                    if (obj != null) {
-                        return obj.getString("userId");
-                    }
+                    userId = decode(cooky.getValue(), "userId");
                 }
             }
         }
-        return null;
-        //返回默认用户
-        //return "0087e6bfbc79458f945da8be3a563807";
+
+        if (!StringUtils.hasText(userId)) {
+            //header
+            String tokenStr = SecurityContext.getHttpServletRequest().getHeader(HttpSecurity.getCookieConfig().getName());
+            if (StringUtils.hasText(tokenStr)) {
+                userId = decode(tokenStr, "userId");
+            }
+        }
+
+        return userId;
     }
 
     private static void addSession(AuthenticationToken token) {
-        SecurityContext.getHttpServletRequest().getSession().setAttribute("AuthenticationToken", token);
+        HttpSession session = SecurityContext.getHttpServletRequest().getSession();
+        session.setMaxInactiveInterval(HttpSecurity.getCookieConfig().getExpiry());
+        session.setAttribute("AuthenticationToken", token);
     }
 
     public static AuthenticationToken getSessionToken() {
         AuthenticationToken token = null;
-        String userId = getUserId();
-        if (StringUtils.hasText(userId)) {
-            //session
-            Object obj = SecurityContext.getHttpServletRequest().getSession().getAttribute("AuthenticationToken");
-            if (obj != null) {
-                token = (AuthenticationToken) obj;
-            }
+        //session
+        Object obj = SecurityContext.getHttpServletRequest().getSession().getAttribute("AuthenticationToken");
+        if (obj != null) {
+            token = (AuthenticationToken) obj;
         }
-
         return token;
     }
 
     public static boolean isLogin() {
-        return StringUtils.hasText(getUserId());
+        return SecurityContext.getAuthenticationToken() != null;
     }
 
     public static String getRequestPath() {
@@ -101,23 +104,19 @@ public class SecurityUtils {
         return EncryptUtil.aesEncrypt(body.toJSONString());
     }
 
-    public static Cookie createCookie() {
-        Cookie cky = new Cookie(HttpSecurity.getCookieConfig().getName(), "");
+    public static Cookie createCookie(String value) {
+        Cookie cky = new Cookie(HttpSecurity.getCookieConfig().getName(), value);
         cky.setDomain(HttpSecurity.getCookieConfig().getDomain());
         cky.setPath(HttpSecurity.getCookieConfig().getPath());
         cky.setMaxAge(HttpSecurity.getCookieConfig().getExpiry());
         return cky;
     }
 
-    public static Cookie createCookieLocal() {
-        Cookie cky = new Cookie(HttpSecurity.getCookieConfig().getName(), "");
+    public static Cookie createCookieLocal(String value) {
+        Cookie cky = new Cookie(HttpSecurity.getCookieConfig().getName(), value);
         cky.setPath(HttpSecurity.getCookieConfig().getPath());
         cky.setMaxAge(HttpSecurity.getCookieConfig().getExpiry());
         return cky;
-    }
-
-    public boolean match(String url, String method) {
-        return SecurityMetadataSource.match(url, method);
     }
 
     public static HttpMethod valueOf(String method) {
@@ -126,5 +125,23 @@ public class SecurityUtils {
         } catch (IllegalArgumentException var2) {
             return null;
         }
+    }
+
+    private static String decode(String source, String key) {
+        String result = null;
+        try {
+            String code = EncryptUtil.aesDecrypt(source);
+            JSONObject obj = (JSONObject) JSONObject.parse(code);
+            if (obj != null) {
+                result = obj.getString(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean match(String url, String method) {
+        return SecurityMetadataSource.match(url, method);
     }
 }

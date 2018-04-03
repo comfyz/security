@@ -1,7 +1,5 @@
 package xyz.comfyz.security.core.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,9 +19,6 @@ import static xyz.comfyz.security.core.access.common.SecurityMetadataSource.requ
 @RestController
 @RequestMapping("/security")
 public class RequestMappingController {
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @RequestMapping(value = "/mapping", method = RequestMethod.GET)
     public Collection getRequestMapping() throws IllegalArgumentException {

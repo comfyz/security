@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import xyz.comfyz.security.core.access.common.SecurityMetadataSource;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.SecurityAuthorizeMode;
-import xyz.comfyz.security.core.access.common.SecurityMetadataSource;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;

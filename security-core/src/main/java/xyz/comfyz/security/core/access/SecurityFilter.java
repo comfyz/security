@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import xyz.comfyz.security.core.cache.UserDetailsCache;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
+import xyz.comfyz.security.core.util.SecurityUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +40,7 @@ public class SecurityFilter implements Filter {
             cacheRequestResponse(servletRequest, servletResponse);
             if (matcher.matches((HttpServletRequest) servletRequest)) {
                 //获取用户
-                AuthenticationToken token = authenticationTokenProvider.loadUser((HttpServletRequest) servletRequest);
+                AuthenticationToken token = authenticationTokenProvider.loadUser();
                 //校验用户是否有权限
                 if (accessDecisionManager.decide(token, (HttpServletRequest) servletRequest)) {
                     filterChain.doFilter(servletRequest, servletResponse);
@@ -47,20 +49,22 @@ public class SecurityFilter implements Filter {
                 //403
                 LOGGER.info("Forbidden for user:{} at path:{}",
                         token == null || token.getUserDetails() == null ? "none" : token.getUserDetails().getUserName(),
-                        ((HttpServletRequest) servletRequest).getRequestURI());
+                        SecurityUtils.getRequestPath());
+
                 JSONObject object = new JSONObject();
+                ((HttpServletResponse) servletResponse).setStatus(HttpStatus.FORBIDDEN.value());
                 object.put("code", "403");
                 object.put("msg", String.format("Forbidden for user:\"%s\" at path:\"%s\"",
                         token == null || token.getUserDetails() == null ? "none" : token.getUserDetails().getUserName(),
-                        ((HttpServletRequest) servletRequest).getRequestURI()));
+                        SecurityUtils.getRequestPath()));
                 servletResponse.getWriter().write(object.toString());
                 return;
             }
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
+            SecurityUtils.signIn(SecurityContext.getAuthenticationToken());
             SecurityContext.clear();
         }
-
     }
 
     private void cacheRequestResponse(ServletRequest request, ServletResponse response) {
