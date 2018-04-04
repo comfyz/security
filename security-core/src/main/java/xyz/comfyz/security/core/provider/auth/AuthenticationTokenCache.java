@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.cache;
+package xyz.comfyz.security.core.provider.auth;
 
 
 import xyz.comfyz.security.core.model.AuthenticationToken;
@@ -10,11 +10,11 @@ import xyz.comfyz.security.core.model.AuthenticationToken;
  * Version:     1.0
  * Description:
  */
-public interface UserDetailsCache {
+public interface AuthenticationTokenCache {
 
     AuthenticationToken get(String userId);
 
-    void put(AuthenticationToken userDetalis);
+    void cache(AuthenticationToken token);
 
     void clear();
 

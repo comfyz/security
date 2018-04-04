@@ -17,10 +17,16 @@ import java.util.Iterator;
  */
 public class AuthenticationToken {
     private final UserDetalis userDetails;
+    private final Object principal;
     private final Collection<AntPathRequestMatcher> authorities;
 
-    public AuthenticationToken(UserDetalis userDetails, Collection<AntPathRequestMatcher> authorities) {
+    public AuthenticationToken(UserDetalis userDetails, Collection<AntPathRequestMatcher> authorities, Object principal) {
+        if (userDetails == null
+                || principal == null)
+            throw new IllegalArgumentException("'userDetails' and 'principal' is not present");
+
         this.userDetails = userDetails;
+        this.principal = principal;
 
         if (authorities == null) {
             this.authorities = Collections.emptyList();
@@ -51,4 +57,7 @@ public class AuthenticationToken {
         return userDetails;
     }
 
+    public Object getPrincipal() {
+        return principal;
+    }
 }

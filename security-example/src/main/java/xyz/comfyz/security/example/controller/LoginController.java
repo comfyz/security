@@ -25,7 +25,6 @@ public class LoginController {
 
     @GetMapping("/{userId}")
     public String admin(@PathVariable String userId) {
-        SecurityUtils.signOut();
         AuthenticationToken token = userDetailsService.loadUser(userId);
         if (token == null) {
             return "no user found";

@@ -3,12 +3,15 @@ package xyz.comfyz.security.core.access;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import xyz.comfyz.security.core.cache.UserDetailsCache;
 import xyz.comfyz.security.core.model.AuthenticationToken;
+import xyz.comfyz.security.core.model.UserDetalis;
+import xyz.comfyz.security.core.provider.AuthenticationProvider;
+import xyz.comfyz.security.core.provider.TokenProvider;
+import xyz.comfyz.security.core.support.SecurityContext;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
+import xyz.comfyz.security.core.util.SecretUtils;
 import xyz.comfyz.security.core.util.SecurityUtils;
 
 import javax.servlet.*;
@@ -27,49 +30,13 @@ import java.io.IOException;
 public class SecurityFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
-    private AntPathRequestMatcher matcher = new AntPathRequestMatcher("/*");
+    private final AuthenticationProvider authenticationTokenProvider;
+    private final AccessDecisionManager accessDecisionManager;
+    private AntPathRequestMatcher matcher = new AntPathRequestMatcher("/**");
 
-    @Autowired
-    private AuthenticationTokenProvider authenticationTokenProvider;
-    @Autowired
-    private AccessDecisionManager accessDecisionManager;
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        try {
-            cacheRequestResponse(servletRequest, servletResponse);
-            if (matcher.matches((HttpServletRequest) servletRequest)) {
-                //获取用户
-                AuthenticationToken token = authenticationTokenProvider.loadUser();
-                //校验用户是否有权限
-                if (accessDecisionManager.decide(token, (HttpServletRequest) servletRequest)) {
-                    filterChain.doFilter(servletRequest, servletResponse);
-                    return;
-                }
-                //403
-                LOGGER.info("Forbidden for user:{} at path:{}",
-                        token == null || token.getUserDetails() == null ? "none" : token.getUserDetails().getUserName(),
-                        SecurityUtils.getRequestPath());
-
-                JSONObject object = new JSONObject();
-                ((HttpServletResponse) servletResponse).setStatus(HttpStatus.FORBIDDEN.value());
-                object.put("code", "403");
-                object.put("msg", String.format("Forbidden for user:\"%s\" at path:\"%s\"",
-                        token == null || token.getUserDetails() == null ? "none" : token.getUserDetails().getUserName(),
-                        SecurityUtils.getRequestPath()));
-                servletResponse.getWriter().write(object.toString());
-                return;
-            }
-            filterChain.doFilter(servletRequest, servletResponse);
-        } finally {
-            SecurityUtils.signIn(SecurityContext.getAuthenticationToken());
-            SecurityContext.clear();
-        }
-    }
-
-    private void cacheRequestResponse(ServletRequest request, ServletResponse response) {
-        SecurityContext.set((HttpServletRequest) request);
-        SecurityContext.set((HttpServletResponse) response);
+    public SecurityFilter(AuthenticationProvider authenticationTokenProvider, AccessDecisionManager accessDecisionManager) {
+        this.authenticationTokenProvider = authenticationTokenProvider;
+        this.accessDecisionManager = accessDecisionManager;
     }
 
     public void setMatcher(AntPathRequestMatcher matcher) {
@@ -77,17 +44,59 @@ public class SecurityFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        try {
+            SecurityContext.cacheRequestResponse((HttpServletRequest) request, (HttpServletResponse) response);
+            UserDetalis userDetalis = SecretUtils.decrypt(TokenProvider.get());
+            //判断权限
+            if (matcher.matches((HttpServletRequest) request)) {
+                //获取用户
+                AuthenticationToken token = authenticationTokenProvider.authenticate(userDetalis);
+
+                if (accessDecisionManager.decide(token, (HttpServletRequest) request)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                JSONObject resp = new JSONObject();
+                if (token == null || token.getUserDetails() == null) {
+                    //401 UNAUTHORIZED
+                    LOGGER.info("Unauthenticated at path {}", SecurityUtils.getRequestPath());
+                    ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
+                    resp.put("code", HttpStatus.UNAUTHORIZED.value());
+                    resp.put("msg", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                } else {
+                    //403 FORBIDDEN
+                    LOGGER.info("Forbidden for user:{} at path:{}",
+                            token.getUserDetails().getUserName(), SecurityUtils.getRequestPath());
+                    ((HttpServletResponse) response).setStatus(HttpStatus.FORBIDDEN.value());
+                    resp.put("code", HttpStatus.FORBIDDEN.value());
+                    resp.put("msg", String.format("Forbidden for user:\"%s\" at path:\"%s\"",
+                            token.getUserDetails().getUserName(), SecurityUtils.getRequestPath()));
+                }
+                response.getWriter().write(resp.toString());
+                return;
+            }
+
+            filterChain.doFilter(request, response);
+
+        } finally {
+            /*
+              ThreadLocal 缓存 HttpServletRequest, HttpServletResponse, AuthenticationToken
+              spring容器采用线程池处理http请求，默认10个线程，导致第11次请求时, ThreadLocal 值存在且与第1次请求的存放的值相同
+              因此每次需要手动清除一下
+             */
+            SecurityContext.clear();
+        }
 
     }
 
     @Override
-    public void destroy() {
-
+    public void init(FilterConfig filterConfig) {
     }
 
-    public void userDetailsCache(UserDetailsCache userDetailsCache) {
-        this.authenticationTokenProvider.userDetailsCache(userDetailsCache);
+    @Override
+    public void destroy() {
     }
 
 }

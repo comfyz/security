@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.access.common;
+package xyz.comfyz.security.core.access.basic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static xyz.comfyz.security.core.util.SecurityUtils.valueOf;
 
+
 /**
  * Author:      宗康飞
  * Mail:        zongkangfei@sudiyi.cn
@@ -35,6 +36,19 @@ public class SecurityMetadataSource {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    public static Collection<AntPathRequestMatcher> requestMapping() {
+        if (CollectionUtils.isEmpty(requestMap))
+            return Collections.emptyList();
+        return requestMap.keySet().parallelStream().filter(matcher -> SecurityAuthorizeMode.ROLE.equals(requestMap.get(matcher))).collect(Collectors.toSet());
+    }
+
+    public static boolean getMatcher(String url, String method) {
+        return requestMap.keySet().parallelStream().anyMatch(antPathRequestMatcher ->
+                (antPathRequestMatcher.getHttpMethod() == null || !StringUtils.hasText(method)
+                        || antPathRequestMatcher.getHttpMethod() == valueOf(method))
+                        && antPathRequestMatcher.matches(url));
+    }
 
     @PostConstruct
     public void initRequestMap() {
@@ -53,23 +67,10 @@ public class SecurityMetadataSource {
         return this;
     }
 
-    public static Collection<AntPathRequestMatcher> requestMapping() {
-        if (CollectionUtils.isEmpty(requestMap))
-            return Collections.emptyList();
-        return requestMap.keySet().parallelStream().filter(matcher -> SecurityAuthorizeMode.ROLE.equals(requestMap.get(matcher))).collect(Collectors.toSet());
-    }
-
     public SecurityAuthorizeMode getMatcher(HttpServletRequest request) {
         return requestMap.keySet().stream().filter(matcher -> matcher.matches(request))
                 .map(requestMap::get)
                 .sorted((o1, o2) -> Integer.compare(o2.ordinal(), o1.ordinal()))
                 .findFirst().orElse(null);
-    }
-
-    public static boolean match(String url, String method) {
-        return requestMap.keySet().parallelStream().anyMatch(antPathRequestMatcher ->
-                (antPathRequestMatcher.getHttpMethod() == null || !StringUtils.hasText(method)
-                        || antPathRequestMatcher.getHttpMethod() == valueOf(method))
-                        && antPathRequestMatcher.matches(url));
     }
 }

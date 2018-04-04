@@ -3,7 +3,7 @@ package xyz.comfyz.security.example.service;
 import org.springframework.stereotype.Service;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.UserDetalis;
-import xyz.comfyz.security.core.access.common.UserDetailsService;
+import xyz.comfyz.security.core.access.basic.UserDetailsService;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import java.util.Collections;
@@ -25,11 +25,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     static {
         users = new HashMap<>();
         users.put("10001", new AuthenticationToken(new UserDetalis("10001", "admin", true)
-                , Collections.emptyList()));
+                , Collections.emptyList(), new Object()));
         users.put("10002", new AuthenticationToken(new UserDetalis("10002", "zhangsan", false)
-                , Collections.singletonList(new AntPathRequestMatcher("/role/zhangsan/**"))));
+                , Collections.singletonList(new AntPathRequestMatcher("/role/zhangsan/**")), new Object()));
         users.put("10003", new AuthenticationToken(new UserDetalis("10003", "lisi", false)
-                , Collections.singletonList(new AntPathRequestMatcher("/role/lisi/**"))));
+                , Collections.singletonList(new AntPathRequestMatcher("/role/lisi/**")), new Object()));
 
     }
 

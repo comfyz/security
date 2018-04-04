@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
-import static xyz.comfyz.security.core.access.common.SecurityMetadataSource.requestMapping;
+import static xyz.comfyz.security.core.access.basic.SecurityMetadataSource.requestMapping;
 
 
 /**

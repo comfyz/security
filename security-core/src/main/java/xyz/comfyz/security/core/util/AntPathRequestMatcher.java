@@ -50,6 +50,14 @@ public final class AntPathRequestMatcher {
         this.httpMethod = StringUtils.hasText(httpMethod) ? HttpMethod.valueOf(httpMethod) : null;
     }
 
+    private static HttpMethod valueOf(String method) {
+        try {
+            return HttpMethod.valueOf(method);
+        } catch (IllegalArgumentException var2) {
+            return null;
+        }
+    }
+
     public boolean matches(HttpServletRequest request) {
         if (this.httpMethod != null && StringUtils.hasText(request.getMethod()) && this.httpMethod != valueOf(request.getMethod())) {
             if (logger.isDebugEnabled()) {
@@ -144,12 +152,10 @@ public final class AntPathRequestMatcher {
         return sb.toString();
     }
 
-    private static HttpMethod valueOf(String method) {
-        try {
-            return HttpMethod.valueOf(method);
-        } catch (IllegalArgumentException var2) {
-            return null;
-        }
+    private interface Matcher {
+        boolean matches(String var1);
+
+        Map<String, String> extractUriTemplateVariables(String var1);
     }
 
     private static class SubpathMatcher implements AntPathRequestMatcher.Matcher {
@@ -187,6 +193,13 @@ public final class AntPathRequestMatcher {
             this.antMatcher = createMatcher(caseSensitive);
         }
 
+        private static AntPathMatcher createMatcher(boolean caseSensitive) {
+            AntPathMatcher matcher = new AntPathMatcher();
+            matcher.setTrimTokens(false);
+            matcher.setCaseSensitive(caseSensitive);
+            return matcher;
+        }
+
         public boolean matches(String path) {
             return this.antMatcher.match(this.pattern, path);
         }
@@ -194,18 +207,5 @@ public final class AntPathRequestMatcher {
         public Map<String, String> extractUriTemplateVariables(String path) {
             return this.antMatcher.extractUriTemplateVariables(this.pattern, path);
         }
-
-        private static AntPathMatcher createMatcher(boolean caseSensitive) {
-            AntPathMatcher matcher = new AntPathMatcher();
-            matcher.setTrimTokens(false);
-            matcher.setCaseSensitive(caseSensitive);
-            return matcher;
-        }
-    }
-
-    private interface Matcher {
-        boolean matches(String var1);
-
-        Map<String, String> extractUriTemplateVariables(String var1);
     }
 }

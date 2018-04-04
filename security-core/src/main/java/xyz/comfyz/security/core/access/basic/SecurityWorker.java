@@ -1,8 +1,9 @@
-package xyz.comfyz.security.core.access.common;
+package xyz.comfyz.security.core.access.basic;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import xyz.comfyz.security.core.support.HttpSecurity;
 
 /**
  * Author:      宗康飞

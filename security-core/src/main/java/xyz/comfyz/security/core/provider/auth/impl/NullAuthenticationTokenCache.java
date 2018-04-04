@@ -1,8 +1,8 @@
-package xyz.comfyz.security.core.cache.impl;
+package xyz.comfyz.security.core.provider.auth.impl;
 
 
-import xyz.comfyz.security.core.cache.UserDetailsCache;
 import xyz.comfyz.security.core.model.AuthenticationToken;
+import xyz.comfyz.security.core.provider.auth.AuthenticationTokenCache;
 
 /**
  * Author:      宗康飞
@@ -11,14 +11,15 @@ import xyz.comfyz.security.core.model.AuthenticationToken;
  * Version:     1.0
  * Description:
  */
-public class NullUserDetailsCache implements UserDetailsCache {
+public class NullAuthenticationTokenCache implements AuthenticationTokenCache {
+
     @Override
     public AuthenticationToken get(String userId) {
         return null;
     }
 
     @Override
-    public void put(AuthenticationToken userDetalis) {
+    public void cache(AuthenticationToken token) {
 
     }
 

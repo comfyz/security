@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import xyz.comfyz.security.core.access.common.SecurityMetadataSource;
+import xyz.comfyz.security.core.access.basic.SecurityMetadataSource;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.SecurityAuthorizeMode;
-import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * Mail:        zongkangfei@sudiyi.cn
  * Date:        11:09 2018/3/22
  * Version:     1.0
- * Description: 判断当前用户{@link AuthenticationToken}是否有访问该资源{@link HttpServletRequest}的权限{@link AntPathRequestMatcher}
+ * Description: 判断当前用户{@link AuthenticationToken}是否有访问该资源{@link HttpServletRequest}的权限{@link xyz.comfyz.security.core.util.AntPathRequestMatcher}
  */
 @Component
 public class AccessDecisionManager {
@@ -30,9 +29,9 @@ public class AccessDecisionManager {
         if (authenticationToken != null && authenticationToken.getUserDetails() != null && authenticationToken.getUserDetails().isAdmin())
             return true;
 
-        SecurityAuthorizeMode requestMatcher = securityMetadataSource.getMatcher(request);
-        if (requestMatcher != null)
-            switch (requestMatcher) {
+        SecurityAuthorizeMode authorizeMode = securityMetadataSource.getMatcher(request);
+        if (authorizeMode != null)
+            switch (authorizeMode) {
                 case NONE:
                     break;
                 case AUTHENTICATED:

@@ -1,4 +1,6 @@
-package xyz.comfyz.security.core.access.common;
+package xyz.comfyz.security.core.access.basic;
+
+import xyz.comfyz.security.core.support.HttpSecurity;
 
 /**
  * Author:      宗康飞
