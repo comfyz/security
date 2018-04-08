@@ -11,7 +11,7 @@ import xyz.comfyz.security.core.provider.auth.AuthenticationTokenCache;
  * Version:     1.0
  * Description:
  */
-public class NullAuthenticationTokenCache implements AuthenticationTokenCache {
+public final class NullAuthenticationTokenCache implements AuthenticationTokenCache {
 
     @Override
     public AuthenticationToken get(String userId) {

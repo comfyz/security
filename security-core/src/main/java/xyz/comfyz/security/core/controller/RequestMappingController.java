@@ -18,7 +18,7 @@ import static xyz.comfyz.security.core.access.basic.SecurityMetadataSource.reque
  */
 @RestController
 @RequestMapping("/security")
-public class RequestMappingController {
+public final class RequestMappingController {
 
     @RequestMapping(value = "/mapping", method = RequestMethod.GET)
     public Collection getRequestMapping() throws IllegalArgumentException {

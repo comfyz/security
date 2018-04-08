@@ -2,7 +2,6 @@ package xyz.comfyz.security.core.access;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import xyz.comfyz.security.core.access.basic.SecurityMetadataSource;
@@ -22,10 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 public class AccessDecisionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessDecisionManager.class);
-    @Autowired
-    private SecurityMetadataSource securityMetadataSource;
+    private final SecurityMetadataSource securityMetadataSource;
 
-    public boolean decide(AuthenticationToken authenticationToken, HttpServletRequest request) {
+    public AccessDecisionManager(SecurityMetadataSource securityMetadataSource) {
+        this.securityMetadataSource = securityMetadataSource;
+    }
+
+    boolean decide(AuthenticationToken authenticationToken, HttpServletRequest request) {
         if (authenticationToken != null && authenticationToken.getUserDetails() != null && authenticationToken.getUserDetails().isAdmin())
             return true;
 

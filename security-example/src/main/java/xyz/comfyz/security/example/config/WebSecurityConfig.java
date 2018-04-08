@@ -3,11 +3,11 @@ package xyz.comfyz.security.example.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import xyz.comfyz.security.core.EnableWebSecurity;
+import xyz.comfyz.security.core.access.basic.HttpSecurity;
 import xyz.comfyz.security.core.access.basic.WebSecurityConfigAdapter;
 import xyz.comfyz.security.core.model.AuthenticationToken;
+import xyz.comfyz.security.core.provider.UserDetailsService;
 import xyz.comfyz.security.core.provider.auth.impl.NullAuthenticationTokenCache;
-import xyz.comfyz.security.core.access.basic.UserDetailsService;
-import xyz.comfyz.security.core.support.HttpSecurity;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 
 /**
@@ -30,15 +30,17 @@ public class WebSecurityConfig extends WebSecurityConfigAdapter {
     @Override
     protected void config(HttpSecurity httpSecurity) {
 
-        httpSecurity.tokenName("tokenname")
-
-                .antMatchers("/login/**")
-                .antMatchers("/error")
-                .antMatchers("/api/**")
-                .exclude()
-
+        httpSecurity
+                //token设置
+                .tokenConfig("Authorization", 60 * 30)
+                //启用cookie
+//                .enableCookie(null, "/")
+                //公开
+                .open("/login/**", "/error", "/api/**", "/swagger-ui.html", "/swagger-resources/**")
                 //登录即可访问
-                .antMatchers("/auth/**").authorized();
+                .authorized("/auth/**", "/v2/api-docs")
+                //拦截路径
+                .filter("/**");
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package xyz.comfyz.security.core.access.basic;
+package xyz.comfyz.security.core.provider;
 
 
 import xyz.comfyz.security.core.model.AuthenticationToken;

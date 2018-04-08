@@ -31,7 +31,7 @@ public class AuthenticationToken {
         if (authorities == null) {
             this.authorities = Collections.emptyList();
         } else {
-            Iterator var2 = authorities.iterator();
+            final Iterator var2 = authorities.iterator();
 
             AntPathRequestMatcher a;
             do {

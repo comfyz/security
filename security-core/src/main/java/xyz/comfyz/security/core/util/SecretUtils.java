@@ -1,7 +1,7 @@
 package xyz.comfyz.security.core.util;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.tomcat.util.security.MD5Encoder;
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.util.StringUtils;
 import xyz.comfyz.security.core.model.UserDetalis;
 
@@ -11,20 +11,24 @@ import xyz.comfyz.security.core.model.UserDetalis;
 @SuppressWarnings("")
 public class SecretUtils {
 
-    private static final String SECRET_SALT = "@*#&$^%";
-    private static final String SECRET_SPLIT = ".";
+    private static final String MD5_SALT = "$1$Comfy";
+    private static final String SECRET_SPLIT = "@";
 
     public static String encrypt(UserDetalis userDetalis) {
-        StringBuilder body = new StringBuilder(EncryptUtil.aesEncrypt(JSONObject.toJSONString(userDetalis)));
-        return body.append(SECRET_SPLIT).append(MD5Encoder.encode(body.append(SECRET_SALT).toString().getBytes())).toString();
+        StringBuilder body = new StringBuilder(JSONObject.toJSONString(userDetalis));
+        return EncryptUtil.aesEncrypt(body.append(SECRET_SPLIT).append(Md5Crypt.md5Crypt(body.toString().getBytes(), MD5_SALT)).toString());
     }
 
     public static UserDetalis decrypt(String secret) {
-        if (StringUtils.hasText(secret) && secret.lastIndexOf(SECRET_SPLIT) < 0) {
-            String md5_var = secret.substring(secret.lastIndexOf(SECRET_SPLIT), secret.length());
-            String body = secret.substring(0, secret.lastIndexOf(md5_var));
-            if (MD5Encoder.encode(body.getBytes()).equals(md5_var))
-                return JSONObject.parseObject(body, UserDetalis.class);
+        if (StringUtils.hasText(secret)) {
+            String val = EncryptUtil.aesDecrypt(secret);
+            final int splitIndex = val.lastIndexOf(SECRET_SPLIT);
+            if (splitIndex < 0 || splitIndex == val.length() - 1)
+                throw new IllegalArgumentException("Invalid secret.");
+            String md5_var = val.substring(splitIndex + 1, val.length());
+            String body = val.substring(0, splitIndex);
+            if (Md5Crypt.md5Crypt((body + SECRET_SPLIT).getBytes(), MD5_SALT).equals(md5_var))
+                return JSONObject.parseObject(body.toString(), UserDetalis.class);
         }
         return null;
     }

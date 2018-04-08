@@ -3,14 +3,14 @@ package xyz.comfyz.security.core.provider.token;
 import org.springframework.util.StringUtils;
 
 /**
- * @author : comfy create at 2018-04-04 15:48
+ * @author : comfy create at 2018-04-08 13:07
  */
-public abstract class AbstractTokenReader implements TokenReader {
+public abstract class AbstractTokenWriter implements TokenWriter {
 
     protected final String name;
     protected final int expiry;
 
-    public AbstractTokenReader(String name, int expiry) {
+    public AbstractTokenWriter(String name, int expiry) {
         if (!StringUtils.hasText(name))
             throw new IllegalArgumentException("'tokenName' is not present.");
         if (expiry == 0)
@@ -25,7 +25,7 @@ public abstract class AbstractTokenReader implements TokenReader {
     }
 
     @Override
-    public int compareTo(TokenReader o) {
+    public int compareTo(TokenWriter o) {
         return Integer.compare(this.sort(), o.sort());
     }
 }

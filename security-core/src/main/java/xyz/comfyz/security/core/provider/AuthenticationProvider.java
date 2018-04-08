@@ -2,11 +2,10 @@ package xyz.comfyz.security.core.provider;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.core.access.basic.UserDetailsService;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.UserDetalis;
 import xyz.comfyz.security.core.provider.auth.AuthenticationTokenCache;
-import xyz.comfyz.security.core.support.SecurityContext;
+import xyz.comfyz.security.core.SecurityContext;
 
 /**
  * Author:      宗康飞
@@ -16,7 +15,7 @@ import xyz.comfyz.security.core.support.SecurityContext;
  * Description:
  */
 @Component
-public class AuthenticationProvider {
+public final class AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final AuthenticationTokenCache userDetailsCache;
@@ -30,7 +29,11 @@ public class AuthenticationProvider {
         if (userDetalis == null || !StringUtils.hasText(userDetalis.getUserId()))
             return null;
 
-        AuthenticationToken token = userDetailsCache.get(userDetalis.getUserId());
+        AuthenticationToken token = SecurityContext.authenticationToken();
+
+        if (token == null)
+            token = userDetailsCache.get(userDetalis.getUserId());
+
         if (token == null)
             token = userDetailsService.loadUser(userDetalis.getUserId());
 

@@ -4,7 +4,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.provider.TokenProvider;
-import xyz.comfyz.security.core.support.SecurityContext;
+import xyz.comfyz.security.core.SecurityContext;
 
 /**
  * Created by sage on 2017/11/19.
@@ -13,14 +13,15 @@ import xyz.comfyz.security.core.support.SecurityContext;
 public class SecurityUtils {
 
     public static String signIn(AuthenticationToken token) {
-        if(token == null)
-            throw new NullPointerException("token ");
+        if (token == null)
+            throw new NullPointerException("token is not present.");
         String secret = SecretUtils.encrypt(token.getUserDetails());
         TokenProvider.flush(secret);
         return secret;
     }
 
     public static void signOut() {
+        TokenProvider.remove(TokenProvider.get());
     }
 
     public static String getRequestPath() {

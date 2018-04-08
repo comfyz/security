@@ -1,9 +1,15 @@
 package xyz.comfyz.security.core.access.basic;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import xyz.comfyz.security.core.support.HttpSecurity;
+import xyz.comfyz.security.core.access.SecurityFilter;
+import xyz.comfyz.security.core.provider.TokenProvider;
+import xyz.comfyz.security.core.provider.token.TokenCache;
+import xyz.comfyz.security.core.provider.token.TokenReader;
+import xyz.comfyz.security.core.provider.token.TokenWriter;
+import xyz.comfyz.security.core.provider.token.impl.CookieTokenReader;
+import xyz.comfyz.security.core.provider.token.impl.CookieTokenWriter;
+import xyz.comfyz.security.core.provider.token.impl.HeaderTokenReader;
+import xyz.comfyz.security.core.provider.token.impl.HeapTokenCache;
 
 /**
  * Author:      宗康飞
@@ -13,18 +19,29 @@ import xyz.comfyz.security.core.support.HttpSecurity;
  * Description:
  */
 @Component
-public class SecurityWorker {
+public final class SecurityWorker {
 
-    private HttpSecurity httpSecurity;
-
-    @Autowired
-    public SecurityWorker(HttpSecurity httpSecurity, WebSecurityConfigAdapter webSecurityConfigAdapter) {
-        this.httpSecurity = httpSecurity;
+    public SecurityWorker(WebSecurityConfigAdapter webSecurityConfigAdapter, HttpSecurity httpSecurity,
+                          SecurityFilter securityFilter, SecurityMetadataSource securityMetadataSource,
+                          TokenProvider tokenProvider) {
         webSecurityConfigAdapter.config(httpSecurity);
-    }
+        securityFilter.setMatcher(httpSecurity.filterPath());
+        securityMetadataSource.authorized(httpSecurity.authorizations());
+        securityMetadataSource.exclude(httpSecurity.exclusions());
 
-    public HttpSecurity getHttpSecurity() {
-        return httpSecurity;
+        tokenProvider.add(new HeaderTokenReader(httpSecurity.tokenConfig().getName(), httpSecurity.tokenConfig().getExpiry()));
+        tokenProvider.add(new HeapTokenCache(httpSecurity.tokenConfig().getName(), httpSecurity.tokenConfig().getExpiry()));
+
+        if (httpSecurity.enableCookie()) {
+            tokenProvider.add(new CookieTokenWriter(httpSecurity.tokenConfig().getName(), httpSecurity.tokenConfig().getExpiry(),
+                    httpSecurity.tokenConfig().getDomain(), httpSecurity.tokenConfig().getPath()));
+            tokenProvider.add(new CookieTokenReader(httpSecurity.tokenConfig().getName(), httpSecurity.tokenConfig().getExpiry(),
+                    httpSecurity.tokenConfig().getDomain(), httpSecurity.tokenConfig().getPath()));
+        }
+
+        tokenProvider.add(httpSecurity.tokenWriter().toArray(new TokenWriter[0]));
+        tokenProvider.add(httpSecurity.tokenReader().toArray(new TokenReader[0]));
+        tokenProvider.add(httpSecurity.tokenCache().toArray(new TokenCache[0]));
     }
 
 }

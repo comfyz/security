@@ -1,17 +1,20 @@
 package xyz.comfyz.security.core.provider.token.impl;
 
 import xyz.comfyz.security.core.provider.token.AbstractTokenReader;
-import xyz.comfyz.security.core.support.HttpSecurity;
-import xyz.comfyz.security.core.support.SecurityContext;
+import xyz.comfyz.security.core.SecurityContext;
 
 /**
  * @author : comfy create at 2018-04-04 15:55
  */
-public class HeaderTokenReader extends AbstractTokenReader {
+public final class HeaderTokenReader extends AbstractTokenReader {
+
+    public HeaderTokenReader(String name, int expiry) {
+        super(name, expiry);
+    }
 
     @Override
     public String read() {
-        return SecurityContext.request().getHeader(HttpSecurity.getTokenName());
+        return SecurityContext.request().getHeader(this.name);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package xyz.comfyz.security.example.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,11 @@ import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 @RequestMapping("login")
 public class LoginController {
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    public LoginController(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @GetMapping("/{userId}")
     public String admin(@PathVariable String userId) {
@@ -29,8 +31,7 @@ public class LoginController {
         if (token == null) {
             return "no user found";
         }
-        SecurityUtils.signIn(token);
-        return "login success, hi " + token.getUserDetails().getUserName();
+        return "login success, hi " + token.getUserDetails().getUserName() + "\n" + SecurityUtils.signIn(token);
     }
 
     @GetMapping("out")

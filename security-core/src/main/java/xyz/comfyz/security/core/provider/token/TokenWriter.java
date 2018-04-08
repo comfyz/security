@@ -1,14 +1,16 @@
 package xyz.comfyz.security.core.provider.token;
 
 /**
- * @author : comfy create at 2018-04-03 19:31
+ * @author : comfy create at 2018-04-08 13:05
  */
-public interface TokenWriter {
+public interface TokenWriter extends Comparable<TokenWriter> {
 
-    boolean exist(String token);
+    default int sort() {
+        return 0;
+    }
 
-    void write(String token);
+    public void write(String token);
 
-    void remove(String token);
+    public void remove(String token);
 
 }

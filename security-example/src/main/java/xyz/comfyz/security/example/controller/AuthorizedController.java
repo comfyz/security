@@ -3,7 +3,7 @@ package xyz.comfyz.security.example.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import xyz.comfyz.security.core.support.SecurityContext;
+import xyz.comfyz.security.core.SecurityContext;
 
 /**
  * Author:      宗康飞

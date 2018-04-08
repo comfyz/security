@@ -5,11 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import xyz.comfyz.security.core.model.AuthenticationToken;
 import xyz.comfyz.security.core.model.UserDetalis;
 import xyz.comfyz.security.core.provider.AuthenticationProvider;
 import xyz.comfyz.security.core.provider.TokenProvider;
-import xyz.comfyz.security.core.support.SecurityContext;
+import xyz.comfyz.security.core.SecurityContext;
 import xyz.comfyz.security.core.util.AntPathRequestMatcher;
 import xyz.comfyz.security.core.util.SecretUtils;
 import xyz.comfyz.security.core.util.SecurityUtils;
@@ -27,7 +28,7 @@ import java.io.IOException;
  * Description:
  */
 @Component
-public class SecurityFilter implements Filter {
+public final class SecurityFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
     private final AuthenticationProvider authenticationTokenProvider;
@@ -39,6 +40,11 @@ public class SecurityFilter implements Filter {
         this.accessDecisionManager = accessDecisionManager;
     }
 
+    public void setMatcher(String pattern) {
+        if (StringUtils.hasText(pattern))
+            this.matcher = new AntPathRequestMatcher(pattern);
+    }
+
     public void setMatcher(AntPathRequestMatcher matcher) {
         this.matcher = matcher;
     }
@@ -47,11 +53,11 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
             SecurityContext.cacheRequestResponse((HttpServletRequest) request, (HttpServletResponse) response);
-            UserDetalis userDetalis = SecretUtils.decrypt(TokenProvider.get());
+            final UserDetalis userDetalis = SecretUtils.decrypt(TokenProvider.get());
             //判断权限
             if (matcher.matches((HttpServletRequest) request)) {
                 //获取用户
-                AuthenticationToken token = authenticationTokenProvider.authenticate(userDetalis);
+                final AuthenticationToken token = authenticationTokenProvider.authenticate(userDetalis);
 
                 if (accessDecisionManager.decide(token, (HttpServletRequest) request)) {
                     filterChain.doFilter(request, response);
