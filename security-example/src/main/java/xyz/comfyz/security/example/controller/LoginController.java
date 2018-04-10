@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import xyz.comfyz.security.core.model.AuthenticationToken;
-import xyz.comfyz.security.core.util.SecurityUtils;
+import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.util.SecurityUtils;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 
 /**

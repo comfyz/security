@@ -1,10 +1,11 @@
 package xyz.comfyz.security.example.service;
 
 import org.springframework.stereotype.Service;
-import xyz.comfyz.security.core.model.AuthenticationToken;
-import xyz.comfyz.security.core.model.UserDetalis;
-import xyz.comfyz.security.core.provider.UserDetailsService;
-import xyz.comfyz.security.core.util.AntPathRequestMatcher;
+import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authority;
+import xyz.comfyz.security.model.UserDetalis;
+import xyz.comfyz.security.provider.UserDetailsService;
+import xyz.comfyz.security.util.AntPathRequestMatcher;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,11 +26,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     static {
         users = new HashMap<>();
         users.put("10001", new AuthenticationToken(new UserDetalis("10001", "admin", true)
-                , Collections.emptyList(), new Object()));
+                , Collections.emptySet(), new Object()));
         users.put("10002", new AuthenticationToken(new UserDetalis("10002", "zhangsan", false)
-                , Collections.singletonList(new AntPathRequestMatcher("/role/zhangsan/**")), new Object()));
+                , Collections.singleton(new Authority(new AntPathRequestMatcher("/role/zhangsan/**"))), new Object()));
         users.put("10003", new AuthenticationToken(new UserDetalis("10003", "lisi", false)
-                , Collections.singletonList(new AntPathRequestMatcher("/role/lisi/**")), new Object()));
+                , Collections.singleton(new Authority(new AntPathRequestMatcher("/role/lisi/**"))), new Object()));
 
     }
 

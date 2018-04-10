@@ -2,12 +2,12 @@ package xyz.comfyz.security.example.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import xyz.comfyz.security.core.EnableWebSecurity;
-import xyz.comfyz.security.core.access.basic.HttpSecurity;
-import xyz.comfyz.security.core.access.basic.WebSecurityConfigAdapter;
-import xyz.comfyz.security.core.model.AuthenticationToken;
-import xyz.comfyz.security.core.provider.UserDetailsService;
-import xyz.comfyz.security.core.provider.auth.impl.NullAuthenticationTokenCache;
+import xyz.comfyz.security.EnableWebSecurity;
+import xyz.comfyz.security.access.basic.HttpSecurity;
+import xyz.comfyz.security.access.basic.WebSecurityConfigAdapter;
+import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.provider.UserDetailsService;
+import xyz.comfyz.security.provider.auth.impl.NullAuthenticationTokenCache;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
 
 /**
