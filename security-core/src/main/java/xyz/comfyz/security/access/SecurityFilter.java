@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.model.AuthenticationToken;
 import xyz.comfyz.security.model.Authority;
 import xyz.comfyz.security.model.UserDetalis;
@@ -15,6 +14,7 @@ import xyz.comfyz.security.provider.AuthenticationProvider;
 import xyz.comfyz.security.provider.TokenProvider;
 import xyz.comfyz.security.support.AntPathRequestMatcher;
 import xyz.comfyz.security.support.SecretUtils;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.support.SecurityUtils;
 
 import javax.servlet.*;
@@ -74,6 +74,7 @@ public final class SecurityFilter implements Filter {
                     LOGGER.info("Unauthenticated at path {}", SecurityUtils.getRequestPath());
                     ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
                     resp.put("code", HttpStatus.UNAUTHORIZED.value());
+                    resp.put("type", HttpStatus.UNAUTHORIZED.getReasonPhrase());
                     resp.put("msg", HttpStatus.UNAUTHORIZED.getReasonPhrase());
                 } else {
                     //403 FORBIDDEN
@@ -81,6 +82,7 @@ public final class SecurityFilter implements Filter {
                             token.getUserDetails().getUserName(), SecurityUtils.getRequestPath());
                     ((HttpServletResponse) response).setStatus(HttpStatus.FORBIDDEN.value());
                     resp.put("code", HttpStatus.FORBIDDEN.value());
+                    resp.put("type", HttpStatus.FORBIDDEN.getReasonPhrase());
                     resp.put("msg", String.format("Forbidden for user:\"%s\" at path:\"%s\"",
                             token.getUserDetails().getUserName(), SecurityUtils.getRequestPath()));
                 }
@@ -90,6 +92,17 @@ public final class SecurityFilter implements Filter {
 
             filterChain.doFilter(request, response);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            //401 UNAUTHORIZED
+            JSONObject resp = new JSONObject();
+            LOGGER.info("Unauthenticated at path {}", SecurityUtils.getRequestPath());
+            ((HttpServletResponse) response).setStatus(HttpStatus.UNAUTHORIZED.value());
+            resp.put("code", HttpStatus.UNAUTHORIZED.value());
+            resp.put("type", " Authenticate failed");
+            resp.put("msg", e.getLocalizedMessage());
+            response.getWriter().write(resp.toString());
         } finally {
             /*
               ThreadLocal 缓存 HttpServletRequest, HttpServletResponse, AuthenticationToken
