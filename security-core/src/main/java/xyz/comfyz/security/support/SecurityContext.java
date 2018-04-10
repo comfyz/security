@@ -1,4 +1,4 @@
-package xyz.comfyz.security;
+package xyz.comfyz.security.support;
 
 
 import xyz.comfyz.security.model.AuthenticationToken;

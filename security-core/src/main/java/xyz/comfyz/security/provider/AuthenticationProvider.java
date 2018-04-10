@@ -3,7 +3,7 @@ package xyz.comfyz.security.provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.SecurityContext;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.model.AuthenticationToken;
 import xyz.comfyz.security.model.UserDetalis;
 import xyz.comfyz.security.provider.auth.AuthenticationTokenCache;

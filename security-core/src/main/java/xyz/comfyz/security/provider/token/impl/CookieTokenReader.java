@@ -1,6 +1,6 @@
 package xyz.comfyz.security.provider.token.impl;
 
-import xyz.comfyz.security.SecurityContext;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.provider.token.AbstractTokenReader;
 
 import javax.servlet.http.Cookie;

@@ -1,7 +1,10 @@
 package xyz.comfyz.security.model;
 
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Author:      宗康飞
@@ -10,12 +13,12 @@ import java.util.*;
  * Version:     1.0
  * Description:
  */
-public class AuthenticationToken {
+public class AuthenticationToken<T, E extends Authority> {
     private final UserDetalis userDetails;
-    private final Object principal;
-    private final Set<Authority> authorities;
+    private final T principal;
+    private final Set<E> authorities;
 
-    public AuthenticationToken(UserDetalis userDetails, Set<Authority> authorities, Object principal) {
+    public AuthenticationToken(UserDetalis userDetails, Set<E> authorities, T principal) {
         if (userDetails == null
                 || principal == null)
             throw new IllegalArgumentException("'userDetails' and 'principal' is not present");
@@ -26,25 +29,25 @@ public class AuthenticationToken {
         if (authorities == null) {
             this.authorities = Collections.emptySet();
         } else {
-            final Iterator var2 = authorities.iterator();
+            final Iterator<E> var2 = authorities.iterator();
 
-            Authority a;
+            E a;
             do {
                 if (!var2.hasNext()) {
-                    Set<Authority> temp = new HashSet<>(authorities.size());
+                    Set<E> temp = new HashSet<>(authorities.size());
                     temp.addAll(authorities);
                     this.authorities = Collections.unmodifiableSet(temp);
                     return;
                 }
 
-                a = (Authority) var2.next();
+                a = var2.next();
             } while (a != null);
 
             throw new IllegalArgumentException("Authorities collection cannot contain any null elements");
         }
     }
 
-    public Collection<Authority> getAuthorities() {
+    public Set<E> getAuthorities() {
         return authorities;
     }
 
@@ -52,7 +55,7 @@ public class AuthenticationToken {
         return userDetails;
     }
 
-    public Object getPrincipal() {
+    public T getPrincipal() {
         return principal;
     }
 }

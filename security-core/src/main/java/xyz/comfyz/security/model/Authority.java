@@ -1,6 +1,6 @@
 package xyz.comfyz.security.model;
 
-import xyz.comfyz.security.util.AntPathRequestMatcher;
+import xyz.comfyz.security.support.AntPathRequestMatcher;
 
 /**
  * @author : comfy create at 2018-04-09 15:12

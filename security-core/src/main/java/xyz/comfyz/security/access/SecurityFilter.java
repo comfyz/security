@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.SecurityContext;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authority;
 import xyz.comfyz.security.model.UserDetalis;
 import xyz.comfyz.security.provider.AuthenticationProvider;
 import xyz.comfyz.security.provider.TokenProvider;
-import xyz.comfyz.security.util.AntPathRequestMatcher;
-import xyz.comfyz.security.util.SecretUtils;
-import xyz.comfyz.security.util.SecurityUtils;
+import xyz.comfyz.security.support.AntPathRequestMatcher;
+import xyz.comfyz.security.support.SecretUtils;
+import xyz.comfyz.security.support.SecurityUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,7 @@ public final class SecurityFilter implements Filter {
     }
 
     @Override
+    @SuppressWarnings({"unchecked"})
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
             SecurityContext.cacheRequestResponse((HttpServletRequest) request, (HttpServletResponse) response);
@@ -59,7 +61,7 @@ public final class SecurityFilter implements Filter {
             //判断权限
             if (matcher.matches((HttpServletRequest) request)) {
                 //获取用户
-                final AuthenticationToken token = authenticationTokenProvider.authenticate(userDetalis);
+                final AuthenticationToken<?, Authority> token = authenticationTokenProvider.authenticate(userDetalis);
 
                 if (accessDecisionManager.decide(token, (HttpServletRequest) request)) {
                     filterChain.doFilter(request, response);

@@ -9,7 +9,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import xyz.comfyz.security.model.SecurityAuthorizeMode;
-import xyz.comfyz.security.util.AntPathRequestMatcher;
+import xyz.comfyz.security.support.AntPathRequestMatcher;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static xyz.comfyz.security.model.SecurityAuthorizeMode.*;
-import static xyz.comfyz.security.util.SecurityUtils.valueOf;
+import static xyz.comfyz.security.support.SecurityUtils.valueOf;
 
 
 /**

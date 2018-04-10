@@ -3,7 +3,7 @@ package xyz.comfyz.security.provider;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.SecurityContext;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.provider.token.TokenCache;
 import xyz.comfyz.security.provider.token.TokenReader;
 import xyz.comfyz.security.provider.token.TokenWriter;

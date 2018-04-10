@@ -6,7 +6,7 @@ import xyz.comfyz.security.model.TokenConfig;
 import xyz.comfyz.security.provider.token.TokenCache;
 import xyz.comfyz.security.provider.token.TokenReader;
 import xyz.comfyz.security.provider.token.TokenWriter;
-import xyz.comfyz.security.util.AntPathRequestMatcher;
+import xyz.comfyz.security.support.AntPathRequestMatcher;
 
 import java.util.Arrays;
 import java.util.HashSet;

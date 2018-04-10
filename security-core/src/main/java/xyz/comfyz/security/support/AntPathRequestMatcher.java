@@ -1,4 +1,4 @@
-package xyz.comfyz.security.util;
+package xyz.comfyz.security.support;
 //
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)

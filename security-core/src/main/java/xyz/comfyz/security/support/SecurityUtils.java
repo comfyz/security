@@ -1,8 +1,7 @@
-package xyz.comfyz.security.util;
+package xyz.comfyz.security.support;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import xyz.comfyz.security.SecurityContext;
 import xyz.comfyz.security.model.AuthenticationToken;
 import xyz.comfyz.security.provider.TokenProvider;
 

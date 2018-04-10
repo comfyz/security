@@ -7,8 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import xyz.comfyz.security.access.basic.SecurityMetadataSource;
 import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authority;
 import xyz.comfyz.security.model.SecurityAuthorizeMode;
-import xyz.comfyz.security.util.AntPathRequestMatcher;
+import xyz.comfyz.security.support.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +31,7 @@ public class AccessDecisionManager {
         this.securityMetadataSource = securityMetadataSource;
     }
 
-    boolean decide(AuthenticationToken authenticationToken, HttpServletRequest request) {
+    boolean decide(AuthenticationToken<?, Authority> authenticationToken, HttpServletRequest request) {
         if (authenticationToken != null && authenticationToken.getUserDetails() != null && authenticationToken.getUserDetails().isAdmin())
             return true;
 

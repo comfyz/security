@@ -1,10 +1,11 @@
-package xyz.comfyz.security.util;
+package xyz.comfyz.security.support;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.springframework.util.StringUtils;
 import xyz.comfyz.security.model.UserDetalis;
+import xyz.comfyz.security.util.EncryptUtil;
 
 /**
  * @author : comfy create at 2018-04-03 19:27

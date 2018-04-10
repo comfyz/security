@@ -1,7 +1,7 @@
 package xyz.comfyz.security.provider.token.impl;
 
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.SecurityContext;
+import xyz.comfyz.security.support.SecurityContext;
 import xyz.comfyz.security.provider.token.AbstractTokenWriter;
 
 import javax.servlet.http.Cookie;

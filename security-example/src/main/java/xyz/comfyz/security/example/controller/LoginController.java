@@ -4,9 +4,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import xyz.comfyz.security.model.AuthenticationToken;
-import xyz.comfyz.security.util.SecurityUtils;
+import xyz.comfyz.security.example.bo.Auth;
+import xyz.comfyz.security.example.bo.User;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
+import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.support.SecurityUtils;
 
 /**
  * Author:      宗康飞
@@ -27,7 +29,7 @@ public class LoginController {
 
     @GetMapping("/{userId}")
     public String admin(@PathVariable String userId) {
-        AuthenticationToken token = userDetailsService.loadUser(userId);
+        AuthenticationToken<User, Auth> token = userDetailsService.loadUser(userId);
         if (token == null) {
             return "no user found";
         }
