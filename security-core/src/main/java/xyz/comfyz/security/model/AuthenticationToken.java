@@ -1,8 +1,6 @@
 package xyz.comfyz.security.model;
 
 
-import xyz.comfyz.security.util.AntPathRequestMatcher;
-
 import java.util.*;
 
 /**
@@ -30,7 +28,7 @@ public class AuthenticationToken {
         } else {
             final Iterator var2 = authorities.iterator();
 
-            AntPathRequestMatcher a;
+            Authority a;
             do {
                 if (!var2.hasNext()) {
                     Set<Authority> temp = new HashSet<>(authorities.size());
@@ -39,7 +37,7 @@ public class AuthenticationToken {
                     return;
                 }
 
-                a = (AntPathRequestMatcher) var2.next();
+                a = (Authority) var2.next();
             } while (a != null);
 
             throw new IllegalArgumentException("Authorities collection cannot contain any null elements");

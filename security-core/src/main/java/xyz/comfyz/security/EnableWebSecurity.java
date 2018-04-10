@@ -14,6 +14,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@ComponentScan({"sudiyi.genius.power.auth.core"})
+@ComponentScan({"xyz.comfyz.security"})
 public @interface EnableWebSecurity {
 }
