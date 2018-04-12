@@ -12,10 +12,7 @@ import xyz.comfyz.security.model.Authority;
 import xyz.comfyz.security.model.UserDetalis;
 import xyz.comfyz.security.provider.AuthenticationProvider;
 import xyz.comfyz.security.provider.TokenProvider;
-import xyz.comfyz.security.support.AntPathRequestMatcher;
-import xyz.comfyz.security.support.SecretUtils;
-import xyz.comfyz.security.support.SecurityContext;
-import xyz.comfyz.security.support.SecurityUtils;
+import xyz.comfyz.security.support.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +58,12 @@ public final class SecurityFilter implements Filter {
             //判断权限
             if (matcher.matches((HttpServletRequest) request)) {
                 //获取用户
-                final AuthenticationToken<?, Authority> token = authenticationTokenProvider.authenticate(userDetalis);
+                AuthenticationToken<?, Authority> token = null;
+                if (userDetalis != null &&
+                        (StringUtils.hasText(userDetalis.getUserId()) || !SecurityUser.ANONYMOUS.name().equals(userDetalis.getUserName())))
+                    token = authenticationTokenProvider.authenticate(userDetalis);
+                else
+                    token = SecurityUser.ANONYMOUS.authenticationToken();
 
                 if (accessDecisionManager.decide(token, (HttpServletRequest) request)) {
                     filterChain.doFilter(request, response);

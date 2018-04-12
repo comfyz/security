@@ -19,9 +19,8 @@ public class AuthenticationToken<T, E extends Authority> {
     private final Set<E> authorities;
 
     public AuthenticationToken(UserDetalis userDetails, Set<E> authorities, T principal) {
-        if (userDetails == null
-                || principal == null)
-            throw new IllegalArgumentException("'userDetails' and 'principal' is not present");
+        if (userDetails == null)
+            throw new IllegalArgumentException("'userDetails' is not present");
 
         this.userDetails = userDetails;
         this.principal = principal;

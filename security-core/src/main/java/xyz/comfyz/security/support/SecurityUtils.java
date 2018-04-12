@@ -13,7 +13,7 @@ public class SecurityUtils {
 
     public static String signIn(AuthenticationToken token) {
         if (token == null)
-            throw new NullPointerException("token is not present.");
+            token = SecurityUser.ANONYMOUS.authenticationToken();
         String secret = SecretUtils.encrypt(token.getUserDetails());
         TokenProvider.flush(secret);
         return secret;
