@@ -9,5 +9,5 @@ public interface TokenReader extends Comparable<TokenReader> {
         return 0;
     }
 
-    public String read();
+    public String read(String key);
 }

@@ -13,12 +13,12 @@ import java.util.Set;
  * Version:     1.0
  * Description:
  */
-public class AuthenticationToken<T, E extends Authority> {
+public class Authentication<T, E extends Authority> {
     private final UserDetalis userDetails;
     private final T principal;
     private final Set<E> authorities;
 
-    public AuthenticationToken(UserDetalis userDetails, Set<E> authorities, T principal) {
+    public Authentication(UserDetalis userDetails, Set<E> authorities, T principal) {
         if (userDetails == null)
             throw new IllegalArgumentException("'userDetails' is not present");
 

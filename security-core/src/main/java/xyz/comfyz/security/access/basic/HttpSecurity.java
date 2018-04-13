@@ -2,10 +2,10 @@ package xyz.comfyz.security.access.basic;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import xyz.comfyz.security.cache.CacheStorager;
+import xyz.comfyz.security.model.Token;
 import xyz.comfyz.security.model.TokenConfig;
-import xyz.comfyz.security.provider.token.TokenCache;
 import xyz.comfyz.security.provider.token.TokenReader;
-import xyz.comfyz.security.provider.token.TokenWriter;
 import xyz.comfyz.security.support.AntPathRequestMatcher;
 
 import java.util.Arrays;
@@ -29,51 +29,52 @@ public final class HttpSecurity {
     private final Set<AntPathRequestMatcher> authorizations = new HashSet<>();
     private final Set<AntPathRequestMatcher> exclusions = new HashSet<>();
     private final TreeSet<TokenReader> readers = new TreeSet<>();
-    private final TreeSet<TokenWriter> writers = new TreeSet<>();
-    private final Set<TokenCache> caches = new HashSet<>();
+    private final Set<CacheStorager<Token>> caches = new HashSet<>();
     private boolean enableCookie = false;
-
-    boolean enableCookie() {
-        return enableCookie;
-    }
+    private boolean debug = false;
 
     TokenConfig tokenConfig() {
-        return tokenConfig;
+        return this.tokenConfig;
+    }
+
+    boolean enableCookie() {
+        return this.enableCookie;
+    }
+
+    boolean debug() {
+        return this.debug;
     }
 
     String filterPath() {
-        return filterPath.get();
+        return this.filterPath.get();
     }
 
     Set<AntPathRequestMatcher> exclusions() {
-        return exclusions;
+        return this.exclusions;
     }
 
     Set<AntPathRequestMatcher> authorizations() {
-        return authorizations;
+        return this.authorizations;
     }
 
     TreeSet<TokenReader> tokenReader() {
-        return readers;
+        return this.readers;
     }
 
-    TreeSet<TokenWriter> tokenWriter() {
-        return writers;
-    }
-
-    Set<TokenCache> tokenCache() {
-        return caches;
+    Set<CacheStorager<Token>> tokenCache() {
+        return this.caches;
     }
 
     /*********************** token 配置 *****************************/
     public HttpSecurity tokenConfig(String name, Integer expiry) {
-        tokenConfig.setName(name).setExpiry(expiry);
+        this.tokenConfig.setName(name).setExpiry(expiry);
         return this;
     }
 
-    public HttpSecurity enableCookie(String domain, String path) {
-        enableCookie = true;
-        tokenConfig.setDomain(domain).setPath(path);
+    public HttpSecurity enableCookie(String domain, String path, boolean debug) {
+        this.enableCookie = true;
+        this.debug = debug;
+        this.tokenConfig.setDomain(domain).setPath(path);
 
         return this;
     }
@@ -81,37 +82,31 @@ public final class HttpSecurity {
     /*********************** filter 配置 *****************************/
     public HttpSecurity filter(String pattern) {
         if (StringUtils.hasText(pattern))
-            filterPath.set(pattern);
+            this.filterPath.set(pattern);
         return this;
     }
 
     /*********************** metaSources 路径权限 配置 *****************************/
     public HttpSecurity open(String... matcher) {
-        Arrays.stream(matcher).filter(StringUtils::hasText).distinct().map(AntPathRequestMatcher::new).forEach(exclusions::add);
+        Arrays.stream(matcher).filter(StringUtils::hasText).distinct().map(AntPathRequestMatcher::new).forEach(this.exclusions::add);
         return this;
     }
 
     public HttpSecurity authorized(String... matcher) {
-        Arrays.stream(matcher).filter(StringUtils::hasText).distinct().map(AntPathRequestMatcher::new).forEach(authorizations::add);
+        Arrays.stream(matcher).filter(StringUtils::hasText).distinct().map(AntPathRequestMatcher::new).forEach(this.authorizations::add);
         return this;
     }
 
     /*********************** token获取方式 配置 *****************************/
-    public HttpSecurity add(TokenWriter... writer) {
-        writers.addAll(Arrays.asList(writer));
+    public HttpSecurity reader(TokenReader... reader) {
+        this.readers.addAll(Arrays.asList(reader));
         return this;
     }
 
-
-    /*********************** token写入方式 配置 *****************************/
-    public HttpSecurity add(TokenReader... reader) {
-        readers.addAll(Arrays.asList(reader));
-        return this;
-    }
-
-    /*********************** token缓存方式 配置 *****************************/
-    public HttpSecurity add(TokenCache... cache) {
-        caches.addAll(Arrays.asList(cache));
+    /*********************** token缓存 配置 *****************************/
+    @SafeVarargs
+    public final HttpSecurity cache(CacheStorager<Token>... cache) {
+        this.caches.addAll(Arrays.asList(cache));
         return this;
     }
 

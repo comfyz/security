@@ -1,8 +1,8 @@
 package xyz.comfyz.security.provider.auth.impl;
 
 
-import xyz.comfyz.security.model.AuthenticationToken;
-import xyz.comfyz.security.provider.auth.AuthenticationTokenCache;
+import xyz.comfyz.security.model.Authentication;
+import xyz.comfyz.security.provider.auth.AuthenticationCache;
 
 /**
  * Author:      宗康飞
@@ -11,15 +11,15 @@ import xyz.comfyz.security.provider.auth.AuthenticationTokenCache;
  * Version:     1.0
  * Description:
  */
-public final class NullAuthenticationTokenCache implements AuthenticationTokenCache {
+public final class NullAuthenticationCache implements AuthenticationCache {
 
     @Override
-    public AuthenticationToken get(String userId) {
+    public Authentication get(String userId) {
         return null;
     }
 
     @Override
-    public void cache(AuthenticationToken token) {
+    public void cache(Authentication token) {
 
     }
 

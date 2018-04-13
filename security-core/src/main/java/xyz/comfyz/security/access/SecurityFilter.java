@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 import xyz.comfyz.security.model.Authority;
 import xyz.comfyz.security.model.UserDetalis;
 import xyz.comfyz.security.provider.AuthenticationProvider;
@@ -30,13 +30,13 @@ import java.io.IOException;
 public final class SecurityFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityFilter.class);
-    private final AuthenticationProvider authenticationTokenProvider;
+    private final AuthenticationProvider authenticationProvider;
     private final AccessDecisionManager accessDecisionManager;
     private AntPathRequestMatcher matcher = new AntPathRequestMatcher("/**");
 
     @Autowired
-    public SecurityFilter(AuthenticationProvider authenticationTokenProvider, AccessDecisionManager accessDecisionManager) {
-        this.authenticationTokenProvider = authenticationTokenProvider;
+    public SecurityFilter(AuthenticationProvider authenticationProvider, AccessDecisionManager accessDecisionManager) {
+        this.authenticationProvider = authenticationProvider;
         this.accessDecisionManager = accessDecisionManager;
     }
 
@@ -58,12 +58,10 @@ public final class SecurityFilter implements Filter {
             //判断权限
             if (matcher.matches((HttpServletRequest) request)) {
                 //获取用户
-                AuthenticationToken<?, Authority> token = null;
+                Authentication<?, Authority> token = null;
                 if (userDetalis != null &&
                         (StringUtils.hasText(userDetalis.getUserId()) || !SecurityUser.ANONYMOUS.name().equals(userDetalis.getUserName())))
-                    token = authenticationTokenProvider.authenticate(userDetalis);
-                else
-                    token = SecurityUser.ANONYMOUS.authenticationToken();
+                    token = authenticationProvider.authenticate(userDetalis);
 
                 if (accessDecisionManager.decide(token, (HttpServletRequest) request)) {
                     filterChain.doFilter(request, response);
@@ -107,7 +105,7 @@ public final class SecurityFilter implements Filter {
             response.getWriter().write(resp.toString());
         } finally {
             /*
-              ThreadLocal 缓存 HttpServletRequest, HttpServletResponse, AuthenticationToken
+              ThreadLocal 缓存 HttpServletRequest, HttpServletResponse, Authentication
               spring容器采用线程池处理http请求，默认10个线程，导致第11次请求时, ThreadLocal 值存在且与第1次请求的存放的值相同
               因此每次需要手动清除一下
              */

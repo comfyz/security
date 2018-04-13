@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import xyz.comfyz.security.example.bo.Auth;
 import xyz.comfyz.security.example.bo.User;
 import xyz.comfyz.security.example.service.UserDetailsServiceImpl;
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 import xyz.comfyz.security.support.SecurityUtils;
 
 /**
@@ -29,7 +29,7 @@ public class LoginController {
 
     @GetMapping("/{userId}")
     public String admin(@PathVariable String userId) {
-        AuthenticationToken<User, Auth> token = userDetailsService.loadUser(userId);
+        Authentication<User, Auth> token = userDetailsService.loadUser(userId);
         if (token == null) {
             return "no user found";
         }

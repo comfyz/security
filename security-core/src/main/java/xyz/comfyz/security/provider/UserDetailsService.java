@@ -1,7 +1,7 @@
 package xyz.comfyz.security.provider;
 
 
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 
 /**
  * Author:      宗康飞
@@ -11,5 +11,5 @@ import xyz.comfyz.security.model.AuthenticationToken;
  * Description:
  */
 public interface UserDetailsService {
-    AuthenticationToken loadUser(String userId);
+    Authentication loadUser(String userId);
 }

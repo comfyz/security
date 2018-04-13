@@ -1,7 +1,7 @@
 package xyz.comfyz.security.provider.auth;
 
 
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 
 /**
  * Author:      宗康飞
@@ -10,11 +10,11 @@ import xyz.comfyz.security.model.AuthenticationToken;
  * Version:     1.0
  * Description:
  */
-public interface AuthenticationTokenCache {
+public interface AuthenticationCache {
 
-    AuthenticationToken get(String userId);
+    Authentication get(String userId);
 
-    void cache(AuthenticationToken token);
+    void cache(Authentication token);
 
     void clear();
 

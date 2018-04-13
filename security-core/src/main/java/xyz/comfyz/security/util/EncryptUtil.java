@@ -91,6 +91,10 @@ public class EncryptUtil {
         return bytes;
     }
 
+    public static String md5(String salt, String text) {
+        return hash("MD5", salt + text);
+    }
+
     public static String md5(String text) {
         return hash("MD5", text);
     }

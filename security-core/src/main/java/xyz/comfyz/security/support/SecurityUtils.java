@@ -2,7 +2,7 @@ package xyz.comfyz.security.support;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 import xyz.comfyz.security.provider.TokenProvider;
 
 /**
@@ -11,9 +11,9 @@ import xyz.comfyz.security.provider.TokenProvider;
 @Component
 public class SecurityUtils {
 
-    public static String signIn(AuthenticationToken token) {
+    public static String signIn(Authentication token) {
         if (token == null)
-            token = SecurityUser.ANONYMOUS.authenticationToken();
+            token = SecurityUser.ANONYMOUS.authentication();
         String secret = SecretUtils.encrypt(token.getUserDetails());
         TokenProvider.flush(secret);
         return secret;

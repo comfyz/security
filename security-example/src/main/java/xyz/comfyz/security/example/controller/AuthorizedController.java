@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.comfyz.security.example.bo.Auth;
 import xyz.comfyz.security.example.bo.User;
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 import xyz.comfyz.security.support.SecurityContext;
 
 /**
@@ -21,18 +21,18 @@ public class AuthorizedController {
 
     @GetMapping("hi")
     public String sayHi() {
-        return "Hi, " + SecurityContext.authenticationToken().getUserDetails().getUserName() + ", u have login";
+        return "Hi, " + SecurityContext.authentication().getUserDetails().getUserName() + ", u have login";
     }
 
     @GetMapping
     public String sayHello() {
-        return "Hello, " + SecurityContext.authenticationToken().getUserDetails().getUserName() + ", u have login";
+        return "Hello, " + SecurityContext.authentication().getUserDetails().getUserName() + ", u have login";
     }
 
     @SuppressWarnings("unchecked")
     @GetMapping("info")
-    public AuthenticationToken<User, Auth> token() {
-        return SecurityContext.authenticationToken();
+    public Authentication<User, Auth> token() {
+        return SecurityContext.authentication();
     }
 
 }

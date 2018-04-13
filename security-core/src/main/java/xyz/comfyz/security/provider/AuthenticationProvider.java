@@ -3,10 +3,10 @@ package xyz.comfyz.security.provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import xyz.comfyz.security.support.SecurityContext;
-import xyz.comfyz.security.model.AuthenticationToken;
+import xyz.comfyz.security.model.Authentication;
 import xyz.comfyz.security.model.UserDetalis;
-import xyz.comfyz.security.provider.auth.AuthenticationTokenCache;
+import xyz.comfyz.security.provider.auth.AuthenticationCache;
+import xyz.comfyz.security.support.SecurityContext;
 
 /**
  * Author:      宗康飞
@@ -19,19 +19,19 @@ import xyz.comfyz.security.provider.auth.AuthenticationTokenCache;
 public final class AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
-    private final AuthenticationTokenCache userDetailsCache;
+    private final AuthenticationCache userDetailsCache;
 
     @Autowired
-    public AuthenticationProvider(UserDetailsService userDetailsService, AuthenticationTokenCache userDetailsCache) {
+    public AuthenticationProvider(UserDetailsService userDetailsService, AuthenticationCache userDetailsCache) {
         this.userDetailsService = userDetailsService;
         this.userDetailsCache = userDetailsCache;
     }
 
-    public AuthenticationToken authenticate(UserDetalis userDetalis) {
+    public Authentication authenticate(UserDetalis userDetalis) {
         if (userDetalis == null || !StringUtils.hasText(userDetalis.getUserId()))
             return null;
 
-        AuthenticationToken token = SecurityContext.authenticationToken();
+        Authentication token = SecurityContext.authentication();
 
         if (token == null)
             token = userDetailsCache.get(userDetalis.getUserId());
