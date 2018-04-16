@@ -124,7 +124,7 @@ public class RedisCacheStorager<T extends Cacheable> implements CacheStorager<T>
             Set<String> cacheKeys = jedis.smembers(ALLKEY);
             if (!cacheKeys.isEmpty()) {
                 cacheKeys.add(ALLKEY);
-                jedis.del(cacheKeys.toArray(new String[cacheKeys.size()]));
+                jedis.del(cacheKeys.toArray(new String[0]));
             }
         } finally {
             if (jedis != null) {
