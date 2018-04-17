@@ -36,13 +36,13 @@ public class WebSecurityConfig extends WebSecurityConfigAdapter {
                 .tokenConfig("Authorization", 60 * 30)
 
                 //启用cookie
-//                .enableCookie("comfyz.xyz", "/", false)
+                .enableCookie("comfyz.xyz", "/", false)
 
                 //公开
-                .open("/login/**", "/error", "/swagger-ui.html", "/swagger-resources/**")
+                .open("/login/**", "/error", "/swagger-ui.html", "/swagger-resources/**", "/v2/api-docs")
 
                 //登录即可访问
-                .authorized("/auth/**", "/v2/api-docs")
+                .authorized("/auth/**")
 
                 //拦截路径
                 .filter("/**")

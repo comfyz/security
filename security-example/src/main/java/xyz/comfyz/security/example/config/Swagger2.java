@@ -23,6 +23,7 @@ public class Swagger2 {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
+//                .host("security.comfyz.xyz")
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("xyz.comfyz.security.example.controller"))
@@ -32,8 +33,8 @@ public class Swagger2 {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Example APIs")
-                .description("This is description")
+                .title("Security Example Project APIs")
+                .description("This is description of api")
                 .version("1.0.0")
                 .build();
     }
