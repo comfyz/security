@@ -20,6 +20,12 @@ public class SecurityContext {
     private final static ThreadLocal<HttpServletRequest> request = new ThreadLocal<>();
     private final static ThreadLocal<HttpServletResponse> response = new ThreadLocal<>();
 
+    public static String userId() {
+        if (authentication.get() != null && authentication.get().getUserDetails() != null)
+            return authentication.get().getUserDetails().getUserId();
+        return null;
+    }
+
     public static String token() {
         return token.get();
     }
